@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FormMitra (फॉर्म मित्र) - Your AI Document & Form Assistant</title>
+    <meta name="description" content="A friendly AI companion that reads complex forms, explains every field step-by-step, builds your document checklist, and warns about rejection mistakes.">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="/" class="brand">
+                <div class="brand-icon">FM</div>
+                <div class="brand-text">
+                    <h1>FormMitra <span>फॉर्म मित्र</span></h1>
+                    <p>AI Document & Form Assistant</p>
+                </div>
+            </a>
+
+            <div class="nav-controls">
+                <div class="lang-selector" title="Choose explanation language">
+                    <button class="lang-btn active" data-lang="en">English</button>
+                    <button class="lang-btn" data-lang="hi">हिंदी</button>
+                    <button class="lang-btn" data-lang="hinglish">Hinglish</button>
+                </div>
+                <span class="badge-ai">⚡ Gemini 3.5 Multimodal</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- HERO / UPLOAD CARD -->
+        <section class="hero-card" id="heroCard">
+            <div class="hero-header">
+                <h2>No More Form Confusion. No More Rejections.</h2>
+                <p>Upload any government scheme, college admission, exam hall ticket, visa, or official form. FormMitra reads it visually, explains every box in plain language, and protects you from common mistakes.</p>
+            </div>
+
+            <!-- DRAG & DROP ZONE -->
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-icon">📋</div>
+                <h3>Drag & drop your form here</h3>
+                <p>Supports PDF, PNG, JPG, JPEG, and WEBP files (up to 25 MB)</p>
+                <button class="btn-upload" type="button">
+                    <span>📁 Browse File</span>
+                </button>
+                <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" style="display: none;">
+            </div>
+
+            <!-- QUICK SAMPLES -->
+            <div class="samples-wrapper">
+                <div class="samples-title">Or test instantly with sample documents:</div>
+                <div class="samples-grid" id="samplesGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- LOADING BOX -->
+        <section class="loading-box" id="loadingBox">
+            <div class="spinner"></div>
+            <h3 style="font-size: 1.35rem; color: #1e293b; margin-bottom: 0.5rem;">FormMitra is reading your document...</h3>
+            <p style="color: #64748b; font-size: 0.95rem;">Using Gemini Multimodal Vision to understand every section, table, and fine-print instruction.</p>
+
+            <div class="loading-steps">
+                <div class="step-item active">
+                    <div class="step-dot"></div>
+                    <span>Ingesting visual layout and structure...</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-dot"></div>
+                    <span>Identifying form purpose and issuing authority...</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-dot"></div>
+                    <span>Extracting field-by-field instructions and samples...</span>
+                </div>
+                <div class="step-item">
+                    <div class="step-dot"></div>
+                    <span>Mapping pre-flight document checklist & rejection traps...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS CONTAINER -->
+        <section class="results-container" id="resultsContainer">
+
+            <!-- ACTION BAR -->
+            <div class="action-bar">
+                <div class="action-bar-left">
+                    <button class="btn-secondary" id="btnNewUpload">
+                        <span>🔄 Upload Another Form</span>
+                    </button>
+                    <button class="btn-secondary" id="btnPrintGuide">
+                        <span>🖨️ Print / Save Guide as PDF</span>
+                    </button>
+                </div>
+                <div>
+                    <button class="btn-chat-trigger" id="btnOpenChatFromBar">
+                        <span>💬 Ask Mitra a Question</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FORM OVERVIEW CARD -->
+            <div class="overview-card">
+                <div class="overview-top">
+                    <div class="overview-title-group">
+                        <div class="authority-tag">
+                            <span>🏛️</span>
+                            <span id="formAuthority">Issuing Authority</span>
+                        </div>
+                        <h2 id="formTitle">Form Title</h2>
+                    </div>
+                    <div>
+                        <span class="category-badge" id="formCategory">Category</span>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <p id="formSummary">Summary of the form will appear here.</p>
+                </div>
+
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-label">Who should fill this</div>
+                        <div class="meta-val" id="formEligibility">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Submission Mode</div>
+                        <div class="meta-val" id="formSubmissionMode">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Application Fee</div>
+                        <div class="meta-val" id="formFee">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Estimated Time</div>
+                        <div class="meta-val" id="formEstimatedTime">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Deadline / Validity</div>
+                        <div class="meta-val" id="formDeadline">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NAVIGATION TABS -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-target="tab-checklist">
+                    <span>📋 Document Checklist</span>
+                </button>
+                <button class="tab-btn" data-target="tab-fields">
+                    <span>📝 Field-by-Field Guide</span>
+                    <span class="tab-pill" id="fieldsTabCount">0</span>
+                </button>
+                <button class="tab-btn" data-target="tab-mistakes">
+                    <span>🚨 Common Mistakes & Traps</span>
+                </button>
+                <button class="tab-btn" data-target="tab-steps">
+                    <span>🗺️ Step-by-Step Roadmap</span>
+                </button>
+            </div>
+
+            <!-- TAB 1: DOCUMENT CHECKLIST -->
+            <div class="tab-pane active" id="tab-checklist">
+                <div class="checklist-card">
+                    <div class="checklist-header">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700;">Pre-flight Document Checklist</h3>
+                            <p style="color: #64748b; font-size: 0.88rem;">Gather and prepare these documents BEFORE you sit down to fill the form.</p>
+                        </div>
+                        <div class="checklist-counter" id="checklistCounter">0 of 0 ready</div>
+                    </div>
+                    <div class="checklist-grid" id="checklistGrid">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FIELD-BY-FIELD EXPLORER -->
+            <div class="tab-pane" id="tab-fields">
+                <div class="fields-filter-bar">
+                    <input type="text" class="search-input" id="fieldSearch" placeholder="🔍 Search any field name, keyword, or instruction...">
+                    <div class="filter-pills">
+                        <button class="filter-pill-btn active" data-filter="all">All Fields</button>
+                        <button class="filter-pill-btn" data-filter="mandatory">Mandatory Only</button>
+                        <button class="filter-pill-btn" data-filter="optional">Optional Only</button>
+                    </div>
+                </div>
+                <div id="fieldsContainer">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- TAB 3: COMMON MISTAKES & TRAPS -->
+            <div class="tab-pane" id="tab-mistakes">
+                <div style="margin-bottom: 1.25rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #991b1b;">Rejection Warning Radar</h3>
+                    <p style="color: #64748b; font-size: 0.9rem;">These are the exact mistakes where most applicants get rejected, disqualified, or delayed.</p>
+                </div>
+                <div class="mistakes-container" id="mistakesContainer">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- TAB 4: STEP-BY-STEP INSTRUCTIONS -->
+            <div class="tab-pane" id="tab-steps">
+                <div style="margin-bottom: 1.25rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700;">Chronological Action Plan</h3>
+                    <p style="color: #64748b; font-size: 0.9rem;">Follow these steps in order to complete and submit without any hassle.</p>
+                </div>
+                <div class="steps-list" id="stepsList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FLOATING ASK MITRA BUTTON -->
+    <button class="floating-chat-btn" id="floatingChatBtn" style="display: none;">
+        <span>💬</span>
+        <span>Ask Mitra</span>
+    </button>
+
+    <!-- ASK MITRA CHAT DRAWER -->
+    <div class="chat-drawer" id="chatDrawer">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <h4>🤝 Mitra Form Assistant</h4>
+                <p>Ask anything about your form</p>
+            </div>
+            <button class="chat-close-btn" id="chatCloseBtn">&times;</button>
+        </div>
+
+        <div class="chat-messages" id="chatMessages">
+            <div class="msg msg-ai">
+                Hello! I'm <strong>FormMitra</strong>. Upload a document or pick a sample, and I will help you with every question!
+            </div>
+        </div>
+
+        <div class="quick-prompts" id="quickPrompts">
+            <!-- Dynamic prompt chips -->
+        </div>
+
+        <div class="chat-input-bar">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question about this form...">
+            <button class="chat-send-btn" id="chatSendBtn">➤</button>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
